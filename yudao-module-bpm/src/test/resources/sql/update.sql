@@ -1,0 +1,3 @@
+ALTER TABLE bpm_user_group ADD COLUMN tenant_id BIGINT DEFAULT 0 COMMENT '租户编号';
+ALTER TABLE bpm_category ADD COLUMN tenant_id BIGINT DEFAULT 0 COMMENT '租户编号';
+ALTER TABLE bpm_form ADD COLUMN tenant_id BIGINT DEFAULT 0 COMMENT '租户编号';

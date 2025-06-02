@@ -1,0 +1,353 @@
+
+
+
+          
+需要完整分析SQL文件中的所有表结构，先搜索所有CREATE TABLE语句来获取表名列表。
+        
+            
+toolName: search_by_regex
+            
+status: success
+          
+          
+现在获取完整的表结构信息，分段读取SQL文件来分析所有表的详细结构。
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: /Users/mingyang/Documents/ruoyi-vue-pro/ruoyi-vue-pro/sql/mysql/ruoyi-vue-pro.sql
+          
+文件太大，需要分更小的段落来读取表结构信息。
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: /Users/mingyang/Documents/ruoyi-vue-pro/ruoyi-vue-pro/sql/mysql/ruoyi-vue-pro.sql
+          
+继续缩小读取范围来获取表结构详情。
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: /Users/mingyang/Documents/ruoyi-vue-pro/ruoyi-vue-pro/sql/mysql/ruoyi-vue-pro.sql
+          
+继续读取更多表结构信息，获取system相关表的定义。
+        
+            
+toolName: view_files
+            
+status: success
+          
+            
+filePath: /Users/mingyang/Documents/ruoyi-vue-pro/ruoyi-vue-pro/sql/mysql/ruoyi-vue-pro.sql
+          
+# 若依Vue Pro数据库表结构分析
+
+基于SQL文件分析，该系统包含47个主要数据表，按功能模块分类如下：
+
+## 📊 表结构概览
+
+### 基础设施模块 (infra_*)
+
+#### 1. infra_api_access_log - API访问日志表
+- **主键**: id (bigint)
+- **核心字段**:
+  - trace_id: 链路追踪编号
+  - user_id: 用户编号
+  - request_method: 请求方法
+  - request_url: 请求地址
+  - user_ip: 用户IP
+  - duration: 执行时长
+- **索引**: idx_create_time
+
+#### 2. infra_api_error_log - 系统异常日志表
+- **主键**: id (bigint)
+- **核心字段**:
+  - exception_name: 异常名称
+  - exception_message: 异常消息
+  - exception_stack_trace: 异常堆栈
+  - process_status: 处理状态
+
+#### 3. infra_codegen_table - 代码生成表定义
+- **主键**: id (bigint)
+- **核心字段**:
+  - table_name: 表名称
+  - module_name: 模块名
+  - business_name: 业务名
+  - class_name: 类名称
+
+#### 4. infra_codegen_column - 代码生成字段定义
+- **主键**: id (bigint)
+- **外键**: table_id → infra_codegen_table.id
+- **核心字段**:
+  - column_name: 字段名
+  - data_type: 字段类型
+  - java_type: Java类型
+
+#### 5. infra_config - 参数配置表
+- **主键**: id (bigint)
+- **核心字段**:
+  - category: 参数分组
+  - config_key: 参数键名
+  - value: 参数值
+
+#### 6. infra_data_source_config - 数据源配置表
+- **主键**: id (bigint)
+- **核心字段**:
+  - name: 数据源名称
+  - url: 连接地址
+  - username/password: 认证信息
+
+#### 7. infra_file - 文件表
+- **主键**: id (bigint)
+- **外键**: config_id → infra_file_config.id
+- **核心字段**:
+  - name: 文件名
+  - path: 文件路径
+  - url: 文件URL
+  - size: 文件大小
+
+#### 8. infra_file_config - 文件配置表
+- **主键**: id (bigint)
+- **核心字段**:
+  - name: 配置名
+  - storage: 存储器类型
+  - config: 存储配置JSON
+
+#### 9. infra_file_content - 文件内容表
+- **主键**: id (bigint)
+- **核心字段**:
+  - config_id: 配置编号
+  - path: 文件路径
+  - content: 文件内容
+
+#### 10. infra_job - 定时任务表
+- **主键**: id (bigint)
+- **核心字段**:
+  - name: 任务名称
+  - handler_name: 处理器名称
+  - cron_expression: Cron表达式
+  - status: 任务状态
+
+#### 11. infra_job_log - 定时任务日志表
+- **主键**: id (bigint)
+- **外键**: job_id → infra_job.id
+- **核心字段**:
+  - handler_name: 处理器名称
+  - execute_time: 执行时间
+  - duration: 执行时长
+  - status: 执行状态
+
+### 系统管理模块 (system_*)
+
+#### 12. system_users - 用户表
+- **主键**: id (bigint)
+- **核心字段**:
+  - username: 用户名
+  - password: 密码
+  - nickname: 昵称
+  - email: 邮箱
+  - mobile: 手机号
+  - status: 状态
+
+#### 13. system_role - 角色表
+- **主键**: id (bigint)
+- **核心字段**:
+  - name: 角色名称
+  - code: 角色编码
+  - sort: 显示顺序
+  - status: 状态
+
+#### 14. system_menu - 菜单表
+- **主键**: id (bigint)
+- **核心字段**:
+  - parent_id: 父菜单ID
+  - name: 菜单名称
+  - type: 菜单类型
+  - path: 路由地址
+  - permission: 权限标识
+
+#### 15. system_dept - 部门表
+- **主键**: id (bigint)
+- **核心字段**:
+  - parent_id: 父部门ID
+  - name: 部门名称
+  - sort: 显示顺序
+  - leader_user_id: 负责人
+
+#### 16. system_post - 岗位表
+- **主键**: id (bigint)
+- **核心字段**:
+  - code: 岗位编码
+  - name: 岗位名称
+  - sort: 显示顺序
+  - status: 状态
+
+#### 17. system_user_role - 用户角色关联表
+- **主键**: id (bigint)
+- **外键**: 
+  - user_id → system_users.id
+  - role_id → system_role.id
+
+#### 18. system_user_post - 用户岗位关联表
+- **主键**: id (bigint)
+- **外键**:
+  - user_id → system_users.id
+  - post_id → system_post.id
+
+#### 19. system_role_menu - 角色菜单关联表
+- **主键**: id (bigint)
+- **外键**:
+  - role_id → system_role.id
+  - menu_id → system_menu.id
+
+#### 20. system_dict_type - 字典类型表
+- **主键**: id (bigint)
+- **核心字段**:
+  - name: 字典名称
+  - type: 字典类型
+  - status: 状态
+
+#### 21. system_dict_data - 字典数据表
+- **主键**: id (bigint)
+- **外键**: dict_type → system_dict_type.type
+- **核心字段**:
+  - label: 字典标签
+  - value: 字典键值
+  - sort: 显示顺序
+
+### 其他核心表
+
+#### 22-47. 其他系统表包括：
+- system_login_log - 登录日志
+- system_operate_log - 操作日志
+- system_mail_* - 邮件相关
+- system_sms_* - 短信相关
+- system_oauth2_* - OAuth2相关
+- system_social_* - 社交登录相关
+- system_tenant_* - 租户相关
+- system_notify_* - 通知相关
+- yudao_demo* - 演示表
+
+## 🔗 ER图关系
+
+```mermaid
+erDiagram
+    %% 用户权限核心关系
+    system_users ||--o{ system_user_role : "用户-角色"
+    system_role ||--o{ system_user_role : "角色-用户"
+    system_role ||--o{ system_role_menu : "角色-菜单"
+    system_menu ||--o{ system_role_menu : "菜单-角色"
+    system_users ||--o{ system_user_post : "用户-岗位"
+    system_post ||--o{ system_user_post : "岗位-用户"
+    system_dept ||--o{ system_users : "部门-用户"
+    
+    %% 字典关系
+    system_dict_type ||--o{ system_dict_data : "字典类型-数据"
+    
+    %% 代码生成关系
+    infra_codegen_table ||--o{ infra_codegen_column : "表-字段"
+    
+    %% 文件管理关系
+    infra_file_config ||--o{ infra_file : "文件配置-文件"
+    
+    %% 任务调度关系
+    infra_job ||--o{ infra_job_log : "任务-日志"
+    
+    %% 租户关系
+    system_tenant_package ||--o{ system_tenant : "租户套餐-租户"
+    
+    system_users {
+        bigint id PK
+        varchar username UK
+        varchar password
+        varchar nickname
+        varchar email
+        varchar mobile
+        bigint dept_id FK
+        tinyint status
+    }
+    
+    system_role {
+        bigint id PK
+        varchar name
+        varchar code UK
+        int sort
+        tinyint status
+    }
+    
+    system_menu {
+        bigint id PK
+        bigint parent_id
+        varchar name
+        tinyint type
+        varchar path
+        varchar permission
+    }
+    
+    system_dept {
+        bigint id PK
+        bigint parent_id
+        varchar name
+        int sort
+        bigint leader_user_id
+    }
+    
+    system_dict_type {
+        bigint id PK
+        varchar name
+        varchar type UK
+        tinyint status
+    }
+    
+    system_dict_data {
+        bigint id PK
+        varchar dict_type FK
+        varchar label
+        varchar value
+        int sort
+    }
+```
+
+## 📈 数据库设计特点
+
+### 1. 统一的基础字段
+所有表都包含标准的审计字段：
+- `creator`: 创建者
+- `create_time`: 创建时间
+- `updater`: 更新者
+- `update_time`: 更新时间
+- `deleted`: 逻辑删除标识
+- `tenant_id`: 租户编号（多租户支持）
+
+### 2. 字符集和排序规则
+- 统一使用 `utf8mb4` 字符集
+- 排序规则为 `utf8mb4_unicode_ci`
+- 支持完整的Unicode字符集
+
+### 3. 存储引擎
+- 全部使用 `InnoDB` 存储引擎
+- 支持事务和外键约束
+- 具备良好的并发性能
+
+### 4. 索引设计
+- 主键统一使用 `bigint` 自增
+- 重要查询字段建立了相应索引
+- 如 `idx_create_time` 等时间索引
+
+### 5. 多租户架构
+- 大部分表包含 `tenant_id` 字段
+- 支持SaaS多租户模式
+- 数据隔离和权限控制
+
+这是一个典型的企业级后台管理系统数据库设计，涵盖了用户权限管理、系统配置、文件管理、任务调度、代码生成等核心功能模块。
+        
